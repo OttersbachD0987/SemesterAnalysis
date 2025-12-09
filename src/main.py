@@ -31,6 +31,9 @@ app.config['SECRET_KEY'] = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d
 # - Program comes from the StudentTermProgram column
 # - Avg. Credits is calculated from the ActiveCred column
 
+# By Program: Select a specific program → Select semester(s) → Generate Excel file and plot all programs for selected semester(s)
+# By Division: Select division → Select semester(s) → Generate Excel file and plot all programs within that division
+
 def allowed_data_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_DATA_EXTENSIONS
@@ -51,9 +54,6 @@ def upload_data_file():
             StudentData = pd.read_csv(file.stream)
             ProgramStudents     = StudentData[StudentData["StudentTermProgram"][0] == "A"]
             CertificateStudents = StudentData[StudentData["StudentTermProgram"][0] == "C"]
-            print(StudentData)
-            print(ProgramStudents)
-            print(CertificateStudents)
             return {"result": "Success"}
     return {"result": "GET"}
 
