@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script>
+            var text = "Test text that\n is a thing."
+            function getMousePosition(canvas, event) {
+                let rect = canvas.getBoundingClientRect();
+                mx = event.clientX - rect.left;
+                my = event.clientY - rect.top;
+            }
+        </script>
+    </head>
+    <body class="content-container">
+        <div class="sidebar">
+            <h1 class="header-title">Sidebar</h1>
+            <form id="databaseForm" method=post enctype=multipart/form-data>
+                <input type=file name=file>
+                <input type=submit value=Upload>
+            </form>
+        </div>
+        <div class="main-content">
+            <h1>Results.</h1>
+            <canvas id="drawCanvas" width="600px" height="600px"></canvas>
+        </div>
+        <script>
+            document.getElementById('databaseForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch("{{ url_for('upload_data_file') }}", {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+            const c = document.getElementById("drawCanvas");
+            const ctx = c.getContext("2d");
+            c.addEventListener('mousemove', function(event) {
+                getMousePosition(c, event);
+            });
+            function drawCanvas() {
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, 600, 600);
+                ctx.fillStyle = "black";
+                ctx.font = '12px Arial';
+                var y = 14;
+            
+                text.split("\n").forEach(a => {
+                    ctx.fillText(a, 10, y);
+                    y += 14;
+                });
+                requestAnimationFrame(drawCanvas)
+            }
+
+            drawCanvas()
+        </script>
+    </body>
+</html>
